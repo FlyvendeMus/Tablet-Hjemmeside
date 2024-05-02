@@ -25,5 +25,35 @@ canvas {
   top:0;
 }
 
+main{
+  width:100vw;
+  height:100vh;
+  display:grid;
+  place-items:center;
+}
 
+#explainer{
+  width:100vw;
+  height:100vh;
+  display:grid;
+  place-items:center;
+  color:white;
+  position:fixed;
+  left:-100vw;
+  transition:all .9s ease-in-out;
+}
+
+.indhold{
+  width:40vw;
+}
+
+#explainer.show{
+  left:0;
+}
+
+video{
+  position:fixed;
+  left:0;
+  top:0;
+}
 

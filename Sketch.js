@@ -8,6 +8,10 @@ let sensorData = 20
 
 let playing = false;
 
+//600 er ti sekunder 
+let tempo = 0
+let lastTempo = 0
+
 
 
 // Load lyd og Video
@@ -23,19 +27,20 @@ function preload() {
   
   // Video
   BE_Loop = createVideo(['Video/BreathingLoop.mp4']);
+  BE_Loop.hide()
+
 
   
 }
 
+let soundButton, breatheButton
 
 function setup() {
-  noCanvas();
+  createCanvas(windowWidth, windowHeight)
   //lav en div til infoteksten
   infoDiv = createDiv(info)
   //sæt den nederst på canvas
   infoDiv.position(20,40)
-  // Loop video
-  BE_Loop.loop();
   
   
   //Opret forbindelse til MQTT serveren (den der står i USA)
@@ -77,6 +82,74 @@ function setup() {
     }
     
   })
+  soundButton = createButton('sound')
+  breatheButton = createButton('breathe')
+  soundButton.position(100, 100)
+  breatheButton.position(100, 200)
+  soundButton.mousePressed(sound)
+  breatheButton.mousePressed(breathe)
+}
+
+function sound(){
+  select('#explainer').removeClass('show')
+  state = 'sound'
+  // Loop video
+  BE_Loop.show()
+  BE_Loop.loop();
+}
+
+function breathe(){
+  BE_Loop.hide()
+  BE_Loop.pause()
+  tempo = 0
+  direction = true 
+  state = 'breatheStart'
+  background(0)
+  select('#explainer').addClass('show')
+  select('#breatheButton').mousePressed(setTempo)
+}
+
+function setTempo(){
+  if(tempo != 0){
+    state = 'breathe'
+    select('#explainer').hide()
+  }
+  select('#breatheButton').html('Breathe Out')
+  //vi sætter tempo til nu minus sidste gang
+  tempo = round(millis() - lastTempo)
+  tempo = round(tempo / 1000 * 60)
+  //og så nulstiller vi sidste gang til nu
+  lastTempo = millis()
+  console.log(tempo)
+}
+
+
+let state = 'start'
+let direction = true
+let circleSize = 0
+
+function draw() {
+  if(state=='sound'){
+    //gør evt noget
+  }
+  if(state=='breathe'){
+    background(0)
+    fill('white')
+    if(direction){
+       circleSize += 4
+    }else{
+      circleSize -= 4
+    }
+    //HER SKIFTER ÅNDEDRÆTTET 
+    if(frameCount % tempo == 0){
+      console.log('tempo skifter')
+      direction = !direction
+      //connection.publish('emne-millis', 'direction')
+      //connection.publish('emne-retning', 'direction')
+    }
+    ellipse(width/2, height/2, circleSize, circleSize)  
+    console.log(frameCount % tempo)
+  }
 }
 
 function transition(sound, duration, newSound) {
@@ -120,6 +193,3 @@ function transition(sound, duration, newSound) {
 }
 
 
-function draw() {
-  
-}
