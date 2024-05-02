@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Martel+Sans:wght@200;300;400;600;700;800;900&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Martel Sans";
+  color:white;
+}
+canvas {
+  display: block;
+}
+
+.content{
+  width:100vw;
+  height:100vh;
+  position:fixed;
+  top:0;
+  left:0;
+  display:grid;
+  place-items:center;
+}
+.info{
+  position:fixed;
+  z-index:100;
+  top:0;
+}
+
+
+
