@@ -20,7 +20,7 @@ function preload() {
   soundFormats('mp3');
   sRainForest = loadSound('Sounds/Rainforest.mp3');
   sBeach = loadSound('Sounds/Beach.mp3');
-  sUndervand = loadSound('Sounds/UnderWater.mp3');
+  sUndervand = loadSound('Sounds/Underwater.mp3');
   sIld = loadSound('Sounds/Fireplace.mp3');
   sNull = loadSound('Sounds/Silence.mp3');
   currentlyPlaying = sNull;
