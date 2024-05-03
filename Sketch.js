@@ -8,9 +8,16 @@ let sensorData = 20
 
 let playing = false;
 
-//600 er ti sekunder 
+//state holder styr på hvad draw loopet gør eller ikke gør 
+let state = 'start'
+//direction skifter når man trækker vejret - vi starter  med at puste ud
+let direction = false
+const circleMax = 500
+let circleSize = circleMax
+
 let tempo = 0
 let lastTempo = 0
+let breatheTimer 
 
 
 
@@ -27,9 +34,8 @@ function preload() {
   
   // Video
   BE_Loop = createVideo(['Video/BreathingLoop.mp4']);
+  BE_Loop.size(windowWidth, windowHeight)
   BE_Loop.hide()
-
-
   
 }
 
@@ -88,6 +94,7 @@ function setup() {
   breatheButton.position(100, 200)
   soundButton.mousePressed(sound)
   breatheButton.mousePressed(breathe)
+  select('#tempoButton').mousePressed(setTempo)
 }
 
 function sound(){
@@ -99,56 +106,89 @@ function sound(){
 }
 
 function breathe(){
+  //sæt state så loopet ikke fortsætter 
+  state = 'prepareBreathing'
+  //stop og skjul filmen
   BE_Loop.hide()
   BE_Loop.pause()
-  tempo = 0
-  direction = true 
-  state = 'breatheStart'
+  //clear timer og variabler hvis der var et tempo i gang  
+  if(breatheTimer){
+    //ånd ind fra 0 
+    direction = true 
+    clearInterval(breatheTimer)
+    console.log('timer cancelled')
+    lastTempo = 0
+    tempo = 0
+    direction = false
+    circleSize = circleMax
+    //reset knap tekst
+    select('#tempoButton').html('Breathe In')
+  } 
+  //Vis forklaring 
   background(0)
   select('#explainer').addClass('show')
-  select('#breatheButton').mousePressed(setTempo)
 }
 
 function setTempo(){
-  if(tempo != 0){
+  //hvis lastTempo er 0, er det første gang der trykkes på knappen 
+  if(lastTempo == 0){
+    //knapteksten vendes
+    select('#tempoButton').html('Breathe Out')
+    //lastTempo indstilles 
+    lastTempo = millis()
+    console.log('Indstiller last tempo:  ', lastTempo)
+  }else{
+    //tempo indstilles
+    tempo = round(millis() - lastTempo)
+    //state skifter til breathe
     state = 'breathe'
-    select('#explainer').hide()
-  }
-  select('#breatheButton').html('Breathe Out')
-  //vi sætter tempo til nu minus sidste gang
-  tempo = round(millis() - lastTempo)
-  tempo = round(tempo / 1000 * 60)
-  //og så nulstiller vi sidste gang til nu
-  lastTempo = millis()
-  console.log(tempo)
+    select('#explainer').removeClass('show')
+    //start timeren som kalder funktionen changeDirection, hvert "tempo" millisekund
+    breatheTimer = setInterval(changeDirection, tempo)
+    console.log('Timer i gang med tempo: ', tempo)
+    }
+}
+
+function changeDirection(){
+  //hvis direction er true, sæt den til false, hvis den er false, sæt den til true etc
+  direction = !direction
 }
 
 
-let state = 'start'
-let direction = true
-let circleSize = 0
 
 function draw() {
+
   if(state=='sound'){
     //gør evt noget
   }
   if(state=='breathe'){
-    background(0)
+    //RGBA - den sidste parameter er Alpha (0, 255)
+    background(0,0,0, 2)
     fill('white')
     if(direction){
-       circleSize += 4
+      circleSize += 1
     }else{
-      circleSize -= 4
+      circleSize -= 1
     }
-    //HER SKIFTER ÅNDEDRÆTTET 
-    if(frameCount % tempo == 0){
-      console.log('tempo skifter')
-      direction = !direction
-      //connection.publish('emne-millis', 'direction')
-      //connection.publish('emne-retning', 'direction')
-    }
+    //sørg for at cirkel ikke kan blive mindre end eller større end... 
+    //circleSize = constrain(circleSize, 250, 500)
+    console.log(circleSize)
+    //fjern fyld i cirklen
+    noFill()
+    //stroke er cirklens omkreds med næsten helt hvid 
+    stroke(255, 255, 255, 200)
+    //omkredsens tykkelse
+    strokeWeight(12)
     ellipse(width/2, height/2, circleSize, circleSize)  
-    console.log(frameCount % tempo)
+    if(frameCount % 60 == 0){
+      //draw Stars
+      for(i=0; i < 3; i++){
+        noStroke()
+        fill(255, 255, 255, random(255))
+        ellipse(random(width), random(height), random(6))
+      }
+    }
+  
   }
 }
 
