@@ -66,19 +66,19 @@ function setup() {
     //skift lyd
     switch(ms.toString()) {
       case "Regnskov":
-        transition(currentlyPlaying, 500000, sRainForest);
+        transition(currentlyPlaying, 300000, sRainForest);
         break;
         
       case "Strand":
-        transition(currentlyPlaying, 500000, sBeach);
+        transition(currentlyPlaying, 300000, sBeach);
         break;
         
       case "UnderVand":
-        transition(currentlyPlaying, 500000, sUndervand);
+        transition(currentlyPlaying, 300000, sUndervand);
         break;
         
       case "Ild":
-        transition(currentlyPlaying, 500000, sIld);
+        transition(currentlyPlaying, 300000, sIld);
         break;
         
       default:
@@ -88,17 +88,26 @@ function setup() {
     }
     
   })
-  soundButton = createButton('sound')
-  breatheButton = createButton('breathe')
-  soundButton.position(100, 100)
-  breatheButton.position(100, 200)
-  soundButton.mousePressed(sound)
-  breatheButton.mousePressed(breathe)
+  
+  select('#soundButton').mousePressed(sound)
+  select('#breatheButton').mousePressed(breathe)
   select('#tempoButton').mousePressed(setTempo)
+
+  BE_Loop.mousePressed(function() {
+    BE_Loop.hide()
+    BE_Loop.pause()
+  })
+  
+  select('main').mousePressed(function() {
+    if(state == 'breathe'){
+      state = null;
+      Show("menu");
+    }
+  })
 }
 
 function sound(){
-  select('#explainer').removeClass('show')
+  Show("explainer")
   state = 'sound'
   // Loop video
   BE_Loop.show()
@@ -108,9 +117,9 @@ function sound(){
 function breathe(){
   //sæt state så loopet ikke fortsætter 
   state = 'prepareBreathing'
-  //stop og skjul filmen
-  BE_Loop.hide()
-  BE_Loop.pause()
+  //Skjul knapper
+  Hide("menu");
+
   //clear timer og variabler hvis der var et tempo i gang  
   if(breatheTimer){
     //ånd ind fra 0 
@@ -141,7 +150,11 @@ function setTempo(){
     //tempo indstilles
     tempo = round(millis() - lastTempo)
     //state skifter til breathe
-    state = 'breathe'
+    statedelay = setInterval(function () {
+      state = 'breathe'
+      clearInterval(statedelay)
+    }, 1);
+    
     select('#explainer').removeClass('show')
     //start timeren som kalder funktionen changeDirection, hvert "tempo" millisekund
     breatheTimer = setInterval(changeDirection, tempo)
@@ -179,21 +192,22 @@ function draw() {
     stroke(255, 255, 255, 200)
     //omkredsens tykkelse
     strokeWeight(12)
-    ellipse(width/2, height/2, circleSize, circleSize)  
+    breatheCircle = ellipse(width/2, height/2, circleSize, circleSize)  
     if(frameCount % 60 == 0){
       //draw Stars
-      for(i=0; i < 3; i++){
+      for(i=0; i < 10; i++){
         noStroke()
         fill(255, 255, 255, random(255))
         ellipse(random(width), random(height), random(6))
       }
     }
   
-  }
+  } else{clear()}
 }
 
 function transition(sound, duration, newSound) {
-  // Get the current volume of the sound
+  if(currentVolume = 1){
+    // Get the current volume of the sound
   let currentVolume = 1;
 
   let NewSoundVolume = 0;
@@ -230,6 +244,9 @@ function transition(sound, duration, newSound) {
     sound.setVolume(currentVolume);
     
   }, 10);
+  } else {transition(sound, duration, newSound);}
+  
+  
 }
 
 
