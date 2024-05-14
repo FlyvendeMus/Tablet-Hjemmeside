@@ -119,6 +119,7 @@ function breathe(){
   state = 'prepareBreathing'
   //Skjul knapper
   Hide("menu");
+  transition(currentlyPlaying, 300000, sNull);
 
   //clear timer og variabler hvis der var et tempo i gang  
   if(breatheTimer){

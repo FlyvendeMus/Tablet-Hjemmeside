@@ -35,7 +35,7 @@ main{
 
 #explainer{
   width:100vw;
-  height:50vh;
+  height:100vh;
   display:grid;
   place-items:center;
   color:white;
@@ -66,6 +66,7 @@ video{
 button {
   width: 200px;
   height: 200px;
+  margin: 10px;
 
   background-color: #c2fbd7;
   border-radius: 100px;
@@ -90,17 +91,10 @@ button:hover {
   transform: scale(1.05) rotate(-1deg);
 }
 
-
-#breatheButton {
-  position: absolute;
-  top: 50%;
-  left: 45%;
-  transform-origin: center;
-}
-
-#soundButton {
-  position: absolute;
-  top: 30%;
-  left: 45%;
-  transform-origin: center;
+#menu{
+  width:100vw;
+  height:100vh;
+  display:grid;
+  place-items:center;
+  position: fixed;
 }

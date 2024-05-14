@@ -24,11 +24,11 @@ function ChangeContent(TargetID,html) {
 // Hides target element by setting its scale to zero, this also disables interactibility and makes clicking though the object posible
 function Hide(TargetID) {
     var Target = document.getElementById(TargetID);
-    Target.style.display = 'none';
+    Target.style.transform = 'scale(0)';
 }
 function Show(TargetID) {
     var Target = document.getElementById(TargetID);
-    Target.style.display = 'block';
+    Target.style.transform = 'scale(1)';
 }
 
 // Play a Sound, every execute starts the sound from the beginning. Returns Playing sound ID
