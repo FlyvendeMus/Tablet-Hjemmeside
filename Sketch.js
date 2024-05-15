@@ -90,6 +90,10 @@ function preload() {
   BE_Loop = createVideo(['Video/BreathingLoop.mp4']);
   BE_Loop.size(windowWidth, windowHeight)
   BE_Loop.hide()
+
+  BuffGuss = createVideo(['Video/BuffGuss.mp4']);
+  BuffGuss.size(windowWidth, windowHeight)
+  BuffGuss.hide()
   
 }
 
@@ -180,25 +184,39 @@ BE_Loop.mousePressed(function() {
 });
 
 select('main').mousePressed(function() {
-  if(state == 'breathe'){
-    state = 'Menu';
+  if(state != "Secret"){
+    if(state != "prepareBreathing"){
+      if(state != "sound"){
+        state = 'Menu';
     Show("menu");
+      }
+    }
   }
 });
 
 select('main').doubleClicked(function() {
-  if(state == 'Menu'){
+  if(state == "Menu"){
     console.log("FAGGOT")
-    state = 'Secret';
+    state = "Secret";
     Hide("menu");
     Show("Player-Container")
-  }else if(state == 'Secret'){
-    console.log("Normal mode")
-    state = 'Menu'
+    BuffGuss.show()
+    BuffGuss.play()
+    Timetoplay = setInterval(() => {
+      BuffGuss.stop()
+      BuffGuss.hide()
+      clearInterval(Timetoplay)
+    }, 6000);
+  }else{
+    if(state == "Secret"){
+      console.log("Normal mode")
+    state = "Menu";
     player.pauseVideo();
     Show('menu');
     Hide('Player-Container')
+    }
   }
+  console.log(state)
 });
 }
 
@@ -214,7 +232,7 @@ function breathe(){
   //sæt state så loopet ikke fortsætter 
   state = 'prepareBreathing'
   //Skjul knapper
-  Hide("menu");
+  Hide('menu')
   transition(currentlyPlaying, 300000, sNull);
 
   //clear timer og variabler hvis der var et tempo i gang  
