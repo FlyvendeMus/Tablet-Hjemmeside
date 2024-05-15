@@ -186,9 +186,9 @@ BE_Loop.mousePressed(function() {
 select('main').mousePressed(function() {
   if(state != "Secret"){
     if(state != "prepareBreathing"){
-      if(state != "sound"){
+      if(state != "Menu"){
         state = 'Menu';
-    Show("menu");
+        Show("menu");
       }
     }
   }
