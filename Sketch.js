@@ -20,6 +20,60 @@ let lastTempo = 0
 let breatheTimer 
 
 
+// Replace 'YOUR_API_KEY' with your actual YouTube API key
+const API_KEY = 'AIzaSyBp8JnigfJcKvJ0JZ7et2TZgCvZhI_NqTU';
+// Replace 'YOUR_PLAYLIST_ID' with the ID of your YouTube playlist
+const PLAYLIST_ARRAY = ['PLefKpFQ8Pvy5aCLAGHD8Zmzsdljos-t2l', 'PLOZkbKh1b_sV4YgDUn3iy2Kv0iv7rgK1f', 'PLStcmtV-qrdB46-ZWMFHExwSoGXbKa1At', 'PLQbtOi0dASPyqh-TToMvsZXNm5dh_UvUJ'];
+let PlaylistID;
+
+// Youtube API
+  
+    // Load the YouTube IFrame Player API asynchronously
+    var tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+
+    // Function called when the YouTube API is loaded
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '160',
+            width: '250',
+            playerVars: {
+                'autoplay': 1,
+                'controls': 0,
+                'showinfo': 0,
+                'rel': 0,
+                'modestbranding': 1
+            },
+            events: {
+                'onReady': onPlayerReady
+            }
+        });
+    }
+
+    // Function called when the player is ready to play videos
+    function onPlayerReady(event) {
+        console.log('Player Ready')
+    }
+  
+
+  // Function to play a random video from the playlist
+  function playRandomVideo(PLAYLIST_ID) {
+    fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PLAYLIST_ID}&key=${API_KEY}`)
+        .then(response => response.json())
+        .then(data => {
+            const videos = data.items;
+            const randomIndex = Math.floor(Math.random() * videos.length);
+            const videoId = videos[randomIndex].snippet.resourceId.videoId;
+            const startTime = Math.floor(Math.random() * player.getDuration());
+                player.loadVideoById(videoId, startTime);
+        })
+        .catch(error => console.error('Error fetching videos:', error));
+}
+
 
 // Load lyd og Video
 function preload() {
@@ -47,6 +101,7 @@ function setup() {
   infoDiv = createDiv(info)
   //sæt den nederst på canvas
   infoDiv.position(20,40)
+  Hide('Player-Container')
   
   
   //Opret forbindelse til MQTT serveren (den der står i USA)
@@ -66,19 +121,37 @@ function setup() {
     //skift lyd
     switch(ms.toString()) {
       case "Regnskov":
-        transition(currentlyPlaying, 300000, sRainForest);
+        if(state != 'Secret'){transition(currentlyPlaying, 300000, sRainForest)}else{
+          PlaylistID = PLAYLIST_ARRAY[0]
+          playRandomVideo(PlaylistID)
+          transition(currentlyPlaying, 300000, sNull)
+        }
         break;
         
       case "Strand":
-        transition(currentlyPlaying, 300000, sBeach);
+        if(state != 'Secret'){transition(currentlyPlaying, 300000, sBeach);}else{
+          PlaylistID = PLAYLIST_ARRAY[1]
+          playRandomVideo(PlaylistID)
+          transition(currentlyPlaying, 300000, sNull)
+        }
         break;
         
       case "UnderVand":
-        transition(currentlyPlaying, 300000, sUndervand);
+        if(state != 'Secret'){transition(currentlyPlaying, 300000, sUndervand);}else{
+          PlaylistID = PLAYLIST_ARRAY[2]
+          playRandomVideo(PlaylistID)
+          transition(currentlyPlaying, 300000, sNull)
+        }
+        
         break;
         
       case "Ild":
-        transition(currentlyPlaying, 300000, sIld);
+        if(state != 'Secret'){transition(currentlyPlaying, 300000, sIld);}else{
+          PlaylistID = PLAYLIST_ARRAY[3]
+          playRandomVideo(PlaylistID)
+          transition(currentlyPlaying, 300000, sNull)
+        }
+        
         break;
 
       case "Off":
@@ -90,33 +163,43 @@ function setup() {
         break;
         
     }
-    
-  })
-  
-  select('#soundButton').mousePressed(sound)
-  select('#breatheButton').mousePressed(breathe)
-  select('#tempoButton').mousePressed(setTempo)
+});
 
-  BE_Loop.mousePressed(function() {
-    BE_Loop.hide()
-    BE_Loop.pause()
-  })
-  
-  select('main').mousePressed(function() {
-    if(state == 'breathe'){
-      state = 'Menu';
-      Show("menu");
-    }
-  })
 
-  select('#menu').doubleClicked(function() {
+// Button Functionalaty
+select('#soundButton').mousePressed(sound);
+select('#breatheButton').mousePressed(breathe);
+select('#tempoButton').mousePressed(setTempo);
+select('#Play').mousePressed(function() {
+  playRandomVideo(PlaylistID)
+});
+
+BE_Loop.mousePressed(function() {
+  BE_Loop.hide()
+  BE_Loop.pause()
+});
+
+select('main').mousePressed(function() {
+  if(state == 'breathe'){
+    state = 'Menu';
+    Show("menu");
+  }
+});
+
+select('main').doubleClicked(function() {
+  if(state == 'Menu'){
     console.log("FAGGOT")
-    if(state == 'Menu'){
-      state = 'secret';
-      Hide("menu");
-      Show('secretMenu')
-    }
-  })
+    state = 'Secret';
+    Hide("menu");
+    Show("Player-Container")
+  }else if(state == 'Secret'){
+    console.log("Normal mode")
+    state = 'Menu'
+    player.pauseVideo();
+    Show('menu');
+    Hide('Player-Container')
+  }
+});
 }
 
 function sound(){
@@ -220,7 +303,7 @@ function draw() {
 
 
   if(state == 'Secret') {
-    
+
   }
 
 }
@@ -268,5 +351,3 @@ function transition(sound, duration, newSound) {
   
   
 }
-
-

@@ -59,7 +59,15 @@ video{
   top:0;
 }
 
-
+#Player-Container {
+  position: absolute;
+  top: 30%;
+  right: 40%;
+  pointer-events: auto;
+  background-color: black;
+  padding: 20px;
+  outline: white dashed 4px;
+}
 
 
 /* CSS */
