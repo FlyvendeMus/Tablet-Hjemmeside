@@ -9,7 +9,7 @@ let sensorData = 20
 let playing = false;
 
 //state holder styr på hvad draw loopet gør eller ikke gør 
-let state = 'start'
+let state = 'Menu'
 //direction skifter når man trækker vejret - vi starter  med at puste ud
 let direction = false
 const circleMax = 500
@@ -80,6 +80,10 @@ function setup() {
       case "Ild":
         transition(currentlyPlaying, 300000, sIld);
         break;
+
+      case "Off":
+        transition(currentlyPlaying, 300000, sNull);
+        break;
         
       default:
         console.log("Typo in MQTT message-" + ms.toString());
@@ -100,8 +104,17 @@ function setup() {
   
   select('main').mousePressed(function() {
     if(state == 'breathe'){
-      state = null;
+      state = 'Menu';
       Show("menu");
+    }
+  })
+
+  select('#menu').doubleClicked(function() {
+    console.log("FAGGOT")
+    if(state == 'Menu'){
+      state = 'secret';
+      Hide("menu");
+      Show('secretMenu')
     }
   })
 }
@@ -204,6 +217,12 @@ function draw() {
     }
   
   } else{clear()}
+
+
+  if(state == 'Secret') {
+    
+  }
+
 }
 
 function transition(sound, duration, newSound) {
