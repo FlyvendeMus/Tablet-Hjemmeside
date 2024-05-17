@@ -88,7 +88,7 @@ function preload() {
   
   // Video
   BE_Loop = createVideo(['Video/BreathingLoop.mp4']);
-  BE_Loop.size(1920, 1080)
+  BE_Loop.size(windowWidth, windowHeight)
   BE_Loop.hide()
 
   BuffGuss = createVideo(['Video/BuffGuss.mp4']);
