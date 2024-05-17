@@ -23,7 +23,7 @@ let breatheTimer
 // Replace 'YOUR_API_KEY' with your actual YouTube API key
 const API_KEY = 'AIzaSyBp8JnigfJcKvJ0JZ7et2TZgCvZhI_NqTU';
 // Replace 'YOUR_PLAYLIST_ID' with the ID of your YouTube playlist
-const PLAYLIST_ARRAY = ['PLefKpFQ8Pvy5aCLAGHD8Zmzsdljos-t2l', 'PLOZkbKh1b_sV4YgDUn3iy2Kv0iv7rgK1f', 'PLStcmtV-qrdB46-ZWMFHExwSoGXbKa1At', 'PLQbtOi0dASPyqh-TToMvsZXNm5dh_UvUJ'];
+const PLAYLIST_ARRAY = ['PLQbtOi0dASPyb4yp1aw1A8mC6ifQvn9vA', 'PLOZkbKh1b_sV4YgDUn3iy2Kv0iv7rgK1f', 'PLStcmtV-qrdB46-ZWMFHExwSoGXbKa1At', 'PLQbtOi0dASPyqh-TToMvsZXNm5dh_UvUJ'];
 let PlaylistID;
 
 // Youtube API
@@ -65,10 +65,10 @@ let PlaylistID;
     fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PLAYLIST_ID}&key=${API_KEY}`)
         .then(response => response.json())
         .then(data => {
-            const videos = data.items;
-            const randomIndex = Math.floor(Math.random() * videos.length);
-            const videoId = videos[randomIndex].snippet.resourceId.videoId;
-            const startTime = Math.floor(Math.random() * player.getDuration());
+            let videos = data.items;
+            let randomIndex = Math.floor(Math.random() * videos.length);
+            let videoId = videos[randomIndex].snippet.resourceId.videoId;
+            let startTime = Math.floor(Math.random() * player.getDuration());
                 player.loadVideoById(videoId, startTime);
         })
         .catch(error => console.error('Error fetching videos:', error));
@@ -88,7 +88,7 @@ function preload() {
   
   // Video
   BE_Loop = createVideo(['Video/BreathingLoop.mp4']);
-  BE_Loop.size(windowWidth, windowHeight)
+  BE_Loop.size(windowWidth, windowHeight+50)
   BE_Loop.hide()
 
   BuffGuss = createVideo(['Video/BuffGuss.mp4']);
@@ -233,7 +233,6 @@ function breathe(){
   state = 'prepareBreathing'
   //Skjul knapper
   Hide('menu')
-  transition(currentlyPlaying, 300000, sNull);
 
   //clear timer og variabler hvis der var et tempo i gang  
   if(breatheTimer){
